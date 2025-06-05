@@ -1,7 +1,5 @@
 # Cadastro-de-Relat-rios-de-Desastres-Naturais
 
-This was the conclusion of my Global DATA STRUCTURES AND ALGORITHMS Solution in 2025
-
 ## Descrição
 Este sistema em C permite cadastrar, listar, buscar e ordenar relatos de catástrofes naturais com geolocalização (latitude e longitude). Os relatos são persistidos em arquivo e podem ser consultados por proximidade geográfica (até 10 km).
 
