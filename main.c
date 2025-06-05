@@ -19,8 +19,8 @@ Relato *relatos = NULL;
 int totalRelatos = 0;
 int capacidadeRelatos = 0;
 
-// Function prototypes
-void carregarRelatos(); // Add this line to declare the function
+// Function prototype
+void carregarRelatos();
 
 // Função para validar CPF simples (11 dígitos numéricos)
 int validarCPF(char *cpf) {
@@ -69,6 +69,26 @@ void mostrarCabecalho(const char *titulo) {
     printf("========================================\n");
 }
 
+// Função para ler CPF garantindo que somente números serão aceitos (11 dígitos)
+int lerCPF(char *cpfBuffer, size_t size) {
+    printf("CPF (somente numeros): ");
+    if (fgets(cpfBuffer, size, stdin) == NULL) return 0;
+    cpfBuffer[strcspn(cpfBuffer, "\n")] = 0; // Remove newline
+
+    if (strlen(cpfBuffer) != 11) {
+        printf("CPF deve conter exatamente 11 digitos.\n");
+        return 0;
+    }
+
+    for (int i = 0; i < 11; i++) {
+        if (!isdigit(cpfBuffer[i])) {
+            printf("CPF deve conter apenas digitos numericos.\n");
+            return 0;
+        }
+    }
+    return 1;
+}
+
 // Função para cadastrar um relato
 void cadastrarRelato() {
     mostrarCabecalho("Cadastro de Relato de Catastrofe");
@@ -95,12 +115,7 @@ void cadastrarRelato() {
         return;
     }
 
-    printf("CPF (somente numeros): ");
-    fgets(r.cpf, sizeof(r.cpf), stdin);
-    r.cpf[strcspn(r.cpf, "\n")] = 0;
-
-    if (!validarCPF(r.cpf)) {
-        printf("CPF invalido! Deve conter exatamente 11 digitos numericos.\n");
+    if (!lerCPF(r.cpf, sizeof(r.cpf))) {
         aguardarEnter();
         return;
     }
@@ -208,12 +223,7 @@ void buscarRelatoPorCPF() {
     mostrarCabecalho("Buscar Relato por CPF");
 
     char cpf[15];
-    printf("Informe o CPF para busca: ");
-    fgets(cpf, sizeof(cpf), stdin);
-    cpf[strcspn(cpf, "\n")] = 0;
-
-    if (!validarCPF(cpf)) {
-        printf("CPF invalido! Deve conter 11 digitos numericos.\n");
+    if (!lerCPF(cpf, sizeof(cpf))) {
         aguardarEnter();
         return;
     }
@@ -326,4 +336,5 @@ int main() {
 
     return 0;
 }
+
 
