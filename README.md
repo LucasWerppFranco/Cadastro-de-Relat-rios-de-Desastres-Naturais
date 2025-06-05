@@ -37,6 +37,8 @@ docker run -it relatos-app
 
 # Colaboradores do Projeto 
 
-Allan de Souza Cardoso - RM: 561721
-Lucas Werpp Franco - RM: 556044
-Júlia Borges Paschoalinoto - RM: 564725
+  Allan de Souza Cardoso - RM: 561721
+
+  Lucas Werpp Franco - RM: 556044
+  
+  Júlia Borges Paschoalinoto - RM: 564725
