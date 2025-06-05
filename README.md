@@ -26,6 +26,12 @@ Este sistema em C permite cadastrar, listar, buscar e ordenar relatos de catást
 ## Como usar
 
 ### 1. Compilar
-```bash
+```
 gcc main.c -O -lm
+```
 
+### Compilando pelo Docker
+```
+docker build -t relatos-app .
+docker run -it relatos-app
+```

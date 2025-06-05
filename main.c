@@ -19,6 +19,9 @@ Relato *relatos = NULL;
 int totalRelatos = 0;
 int capacidadeRelatos = 0;
 
+// Function prototypes
+void carregarRelatos(); // Add this line to declare the function
+
 // Função para validar CPF simples (11 dígitos numéricos)
 int validarCPF(char *cpf) {
     if (strlen(cpf) != 11) return 0;
@@ -53,13 +56,28 @@ double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
     return RAIO_TERRA * c;
 }
 
+// Função para aguardar o usuário pressionar Enter para continuar
+void aguardarEnter() {
+    printf("Pressione Enter para continuar...");
+    while (getchar() != '\n');
+}
+
+// Função para mostrar um cabeçalho claro e visualmente agradável
+void mostrarCabecalho(const char *titulo) {
+    printf("\n========================================\n");
+    printf("  %s\n", titulo);
+    printf("========================================\n");
+}
+
 // Função para cadastrar um relato
 void cadastrarRelato() {
+    mostrarCabecalho("Cadastro de Relato de Catastrofe");
     if (totalRelatos >= capacidadeRelatos) {
         int novaCapacidade = capacidadeRelatos == 0 ? 10 : capacidadeRelatos * 2;
         Relato *novoPtr = realloc(relatos, novaCapacidade * sizeof(Relato));
         if (!novoPtr) {
             printf("Erro de alocacao de memoria!\n");
+            aguardarEnter();
             return;
         }
         relatos = novoPtr;
@@ -71,6 +89,11 @@ void cadastrarRelato() {
     printf("Nome: ");
     fgets(r.nome, sizeof(r.nome), stdin);
     r.nome[strcspn(r.nome, "\n")] = 0;
+    if(strlen(r.nome) == 0){
+        printf("Nome nao pode ser vazio.\n");
+        aguardarEnter();
+        return;
+    }
 
     printf("CPF (somente numeros): ");
     fgets(r.cpf, sizeof(r.cpf), stdin);
@@ -78,17 +101,24 @@ void cadastrarRelato() {
 
     if (!validarCPF(r.cpf)) {
         printf("CPF invalido! Deve conter exatamente 11 digitos numericos.\n");
+        aguardarEnter();
         return;
     }
 
     printf("Descricao do relato: ");
     fgets(r.descricao, sizeof(r.descricao), stdin);
     r.descricao[strcspn(r.descricao, "\n")] = 0;
+    if(strlen(r.descricao) == 0){
+        printf("Descricao nao pode ser vazia.\n");
+        aguardarEnter();
+        return;
+    }
 
     printf("Latitude (-90 a 90): ");
     if (scanf("%lf", &r.latitude) != 1 || !validarLatitude(r.latitude)) {
         printf("Latitude invalida!\n");
         while (getchar() != '\n');
+        aguardarEnter();
         return;
     }
 
@@ -96,6 +126,7 @@ void cadastrarRelato() {
     if (scanf("%lf", &r.longitude) != 1 || !validarLongitude(r.longitude)) {
         printf("Longitude invalida!\n");
         while (getchar() != '\n');
+        aguardarEnter();
         return;
     }
 
@@ -104,43 +135,51 @@ void cadastrarRelato() {
     relatos[totalRelatos++] = r;
 
     printf("Relato cadastrado com sucesso!\n");
+    aguardarEnter();
 }
 
 // Função para listar relatos em até 10 km de uma posição
 void listarRelatosProximos() {
+    mostrarCabecalho("Listar Relatos Proximos (ate 10 km)");
+
     double lat, lon;
     printf("Informe sua Latitude: ");
     if (scanf("%lf", &lat) != 1 || !validarLatitude(lat)) {
         printf("Latitude invalida!\n");
         while (getchar() != '\n');
+        aguardarEnter();
         return;
     }
     printf("Informe sua Longitude: ");
     if (scanf("%lf", &lon) != 1 || !validarLongitude(lon)) {
         printf("Longitude invalida!\n");
         while (getchar() != '\n');
+        aguardarEnter();
         return;
     }
 
     while (getchar() != '\n');
 
-    printf("\nRelatos em até 10 km:\n");
+    printf("\nRelatos em ate 10 km:\n");
     int encontrados = 0;
     for (int i = 0; i < totalRelatos; i++) {
         double distancia = calcularDistancia(lat, lon, relatos[i].latitude, relatos[i].longitude);
         if (distancia <= 10.0) {
+            printf("----------------------------------------\n");
             printf("Relato %d:\n", i + 1);
             printf("Nome: %s\n", relatos[i].nome);
             printf("CPF: %s\n", relatos[i].cpf);
             printf("Descricao: %s\n", relatos[i].descricao);
             printf("Local: (%.6lf, %.6lf)\n", relatos[i].latitude, relatos[i].longitude);
-            printf("Distancia: %.2lf km\n\n", distancia);
+            printf("Distancia: %.2lf km\n", distancia);
+            printf("----------------------------------------\n\n");
             encontrados++;
         }
     }
     if (!encontrados) {
-        printf("Nenhum relato encontrado em até 10 km.\n");
+        printf("Nenhum relato encontrado em ate 10 km.\n");
     }
+    aguardarEnter();
 }
 
 // Função de comparação para ordenar relatos por nome
@@ -152,16 +191,22 @@ int compararRelatos(const void *a, const void *b) {
 
 // Função para ordenar relatos por nome
 void ordenarRelatos() {
+    mostrarCabecalho("Ordenar Relatos por Nome");
+
     if (totalRelatos == 0) {
         printf("Nenhum relato para ordenar.\n");
+        aguardarEnter();
         return;
     }
     qsort(relatos, totalRelatos, sizeof(Relato), compararRelatos);
     printf("Relatos ordenados por nome!\n");
+    aguardarEnter();
 }
 
 // Função para buscar relato pelo CPF
 void buscarRelatoPorCPF() {
+    mostrarCabecalho("Buscar Relato por CPF");
+
     char cpf[15];
     printf("Informe o CPF para busca: ");
     fgets(cpf, sizeof(cpf), stdin);
@@ -169,26 +214,35 @@ void buscarRelatoPorCPF() {
 
     if (!validarCPF(cpf)) {
         printf("CPF invalido! Deve conter 11 digitos numericos.\n");
+        aguardarEnter();
         return;
     }
 
+    int encontrado = 0;
     for (int i = 0; i < totalRelatos; i++) {
         if (strcmp(relatos[i].cpf, cpf) == 0) {
-            printf("Relato encontrado:\n");
+            printf("\nRelato encontrado:\n");
             printf("Nome: %s\n", relatos[i].nome);
             printf("Descricao: %s\n", relatos[i].descricao);
             printf("Local: (%.6lf, %.6lf)\n", relatos[i].latitude, relatos[i].longitude);
-            return;
+            encontrado = 1;
+            break;
         }
     }
-    printf("Relato nao encontrado para o CPF informado.\n");
+    if(!encontrado) {
+        printf("Relato nao encontrado para o CPF informado.\n");
+    }
+    aguardarEnter();
 }
 
 // Função para salvar relatos em arquivo
 void salvarRelatos() {
+    mostrarCabecalho("Salvar Relatos em Arquivo");
+
     FILE *f = fopen("relatos.txt", "w");
     if (!f) {
         printf("Erro ao abrir arquivo para escrita!\n");
+        aguardarEnter();
         return;
     }
 
@@ -202,7 +256,8 @@ void salvarRelatos() {
     }
 
     fclose(f);
-    printf("Relatos salvos em 'relatos.txt'\n");
+    printf("Relatos salvos em 'relatos.txt' com sucesso!\n");
+    aguardarEnter();
 }
 
 // Função para carregar relatos de arquivo
@@ -230,14 +285,17 @@ void carregarRelatos() {
 }
 
 void menu() {
-    printf("\nSistema de Cadastro de Relatos de Catastrofes Naturais\n");
+    printf("\n========================================\n");
+    printf(" Sistema de Cadastro de Relatos de Catastrofes Naturais\n");
+    printf("========================================\n");
     printf("1. Cadastrar relato\n");
     printf("2. Listar relatos proximos (ate 10 km)\n");
     printf("3. Ordenar relatos por nome\n");
     printf("4. Buscar relato por CPF\n");
     printf("5. Salvar relatos em arquivo\n");
     printf("6. Sair\n");
-    printf("Escolha: ");
+    printf("========================================\n");
+    printf("Escolha uma opcao (1-6): ");
 }
 
 int main() {
@@ -259,8 +317,8 @@ int main() {
             case 3: ordenarRelatos(); break;
             case 4: buscarRelatoPorCPF(); break;
             case 5: salvarRelatos(); break;
-            case 6: salvarRelatos(); printf("Saindo...\n"); break;
-            default: printf("Opcao invalida.\n");
+            case 6: salvarRelatos(); printf("Saindo... Obrigado por usar o sistema.\n"); break;
+            default: printf("Opcao invalida. Tente novamente.\n");
         }
     } while (opcao != 6);
 
