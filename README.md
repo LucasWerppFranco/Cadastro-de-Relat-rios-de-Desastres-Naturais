@@ -33,3 +33,10 @@ gcc main.c -O -lm
 docker build -t relatos-app .
 docker run -it relatos-app
 ```
+---
+
+# Colaboradores do Projeto 
+
+Allan de Souza Cardoso - RM: 561721
+Lucas Werpp Franco - RM: 556044
+Júlia Borges Paschoalinoto - RM: 564725
