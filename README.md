@@ -19,6 +19,8 @@ Este sistema em C permite cadastrar, listar, buscar e ordenar relatos de catást
 - Persistência em arquivo `relatos.txt` (salvar e carregar).
 - Validação de entradas e tratamento de erros.
 
+![funcionamento](/funcionando.gif)
+
 ---
 
 ## Como usar
@@ -35,10 +37,10 @@ docker run -it relatos-app
 ```
 ---
 
-# Colaboradores do Projeto 
+# Colaboradores do Projeto
 
   Allan de Souza Cardoso - RM: 561721
 
   Lucas Werpp Franco - RM: 556044
-  
+
   Júlia Borges Paschoalinoto - RM: 564725
